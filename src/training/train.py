@@ -1,0 +1,135 @@
+"""
+Pipeline d'entraînement du modèle LightGBM
+- Cross-validation stratifiée
+- Optimisation des hyperparamètres (GridSearchCV)
+- Score métier
+- Tracking des expériences avec MLflow
+- Enregistrement du modèle dans le Model Registry
+"""
+
+import os
+import joblib
+import json
+import mlflow
+import mlflow.lightgbm
+import pandas as pd
+import datetime 
+
+from lightgbm import LGBMClassifier
+from sklearn.model_selection import GridSearchCV, StratifiedKFold
+
+from src.training.scoring import optimize_decision_threshold
+from src.config.config import config
+from src.training.scoring import business_scorer
+#from src.utils.timer import timer
+
+def train_model():
+    """
+    Pipeline d'entraînement du modèle LightGBM
+    - Cross-validation stratifiée
+    - Optimisation des hyperparamètres (GridSearchCV)
+    - Score métier
+    - Tracking des expériences avec MLflow
+    - Enregistrement du modèle dans le Model Registry
+    """
+    print("Démarrage de l'entraînement du modèle...")
+
+    # 1. Chargement des données
+    X_train = pd.read_pickle(
+        os.path.join(config.DATA_DIR, "X_train.pkl")
+    )
+    y_train = pd.read_pickle(
+        os.path.join(config.DATA_DIR, "y_train.pkl")
+    )
+    X_test = pd.read_pickle(
+        os.path.join(config.DATA_DIR, "X_test.pkl")
+    )
+    y_test = pd.read_pickle(
+        os.path.join(config.DATA_DIR, "y_test.pkl")
+    )
+    
+
+    # 2. Définition du modèle
+    lgbm_model = LGBMClassifier(
+        objective="binary",
+        class_weight="balanced",
+        n_jobs=-1,
+        random_state=42
+    )
+
+    # 3. Grille d’hyperparamètres
+    param_grid = {
+        "num_leaves": [63],
+        "learning_rate": [0.1],
+        "n_estimators": [400],
+        "max_depth": [6, 8, 10],
+        "min_child_samples": [20, 50, 100],
+        "subsample": [0.8, 0.9, 1.0]
+    }
+
+    # 4. Cross-validation
+    cv = StratifiedKFold(
+        n_splits=5,
+        shuffle=True,
+        random_state=42
+    )
+
+    # 5. GridSearchCV
+    grid_search = GridSearchCV(
+        estimator=lgbm_model,
+        param_grid=param_grid,
+        scoring=business_scorer,
+        cv=cv,
+        n_jobs=-1,
+        verbose=1,
+        refit=True
+    )
+
+    # 6. Entraînement + Tracking MLflow
+    mlflow.set_experiment("credit_scoring_lgbm")
+
+    run_name = f"LGBM_GridSearch_CV_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}"
+    with mlflow.start_run(run_name=run_name):
+
+        grid_search.fit(X_train, y_train)
+
+        best_model = grid_search.best_estimator_
+
+        # Log des hyperparamètres
+        mlflow.log_params(grid_search.best_params_)
+
+        # Log métrique métier
+        mlflow.log_metric(
+            "business_score",
+            grid_search.best_score_
+        )
+
+        # Log modèle dans le registry
+        mlflow.lightgbm.log_model(
+            best_model,
+            artifact_path="model",
+            registered_model_name="credit_scoring_lgbm"
+        )
+        
+
+        # Sauvegarde locale (backup)
+        os.makedirs(config.MODELS_DIR, exist_ok=True)
+        joblib.dump(
+            best_model,
+            os.path.join(config.MODELS_DIR, "final_model_LightGBM.pkl")
+        )
+
+        # 7. Recherche du meilleur seuil sur le jeu de test (après entraînement)
+        y_proba = best_model.predict_proba(X_test)[:, 1]
+        best_threshold_info = optimize_decision_threshold(
+            y_true=y_test,
+            y_proba=y_proba
+        )
+        # Sauvegarde du seuil
+        with open(os.path.join(config.DATA_DIR, "best_threshold.json"), "w") as f:
+            json.dump(best_threshold_info, f)
+
+        print("Entraînement terminé – modèle enregistré dans MLflow")
+
+if __name__ == "__main__":
+    train_model()

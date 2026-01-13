@@ -1,0 +1,14 @@
+pytest
+fastapi
+uvicorn
+lightgbm
+scikit-learn
+pandas
+joblib
+evidently(0.4.22)
+mlflow
+matplotlib
+seaborn
+numpy: 1.26.4
+shap: 0.44.1
+
