@@ -17,6 +17,10 @@ import datetime
 
 from lightgbm import LGBMClassifier
 from sklearn.model_selection import GridSearchCV, StratifiedKFold
+from sklearn.dummy import DummyClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import make_pipeline
 
 from src.training.scoring import optimize_decision_threshold
 from src.config.config import config
@@ -47,9 +51,32 @@ def train_model():
     y_test = pd.read_pickle(
         os.path.join(config.DATA_DIR, "y_test.pkl")
     )
-    
 
-    # 2. Définition du modèle
+    # 2. Initialisation MLflow
+    mlflow.set_experiment("credit_scoring_lgbm")
+    
+    # --- MODÈLES DE COMPARAISON (Baseline) ---
+    print("Évaluation des modèles de référence...")
+    
+    # A. Dummy Classifier (Naïf)
+    dummy = DummyClassifier(strategy="stratified", random_state=42)
+    dummy.fit(X_train, y_train)
+    dummy_score = business_scorer(dummy, X_test, y_test)
+    print(f"Dummy Business Score: {dummy_score:.4f}")
+    
+    # B. Régression Logistique (Linéaire)
+    # Nécessite une mise à l'échelle (StandardScaler)
+    logreg = make_pipeline(
+        StandardScaler(),
+        LogisticRegression(class_weight="balanced", random_state=42, max_iter=1000)
+    )
+    logreg.fit(X_train, y_train)
+    logreg_score = business_scorer(logreg, X_test, y_test)
+    print(f"Logistic Regression Business Score: {logreg_score:.4f}")
+
+    # --- MODÈLE PRINCIPAL (LightGBM) ---
+    
+    # 3. Définition du modèle
     lgbm_model = LGBMClassifier(
         objective="binary",
         class_weight="balanced",
@@ -57,7 +84,7 @@ def train_model():
         random_state=42
     )
 
-    # 3. Grille d’hyperparamètres
+    # 4. Grille d’hyperparamètres
     param_grid = {
         "num_leaves": [63],
         "learning_rate": [0.1],
@@ -67,14 +94,14 @@ def train_model():
         "subsample": [0.8, 0.9, 1.0]
     }
 
-    # 4. Cross-validation
+    # 5. Cross-validation
     cv = StratifiedKFold(
         n_splits=5,
         shuffle=True,
         random_state=42
     )
 
-    # 5. GridSearchCV
+    # 6. GridSearchCV
     grid_search = GridSearchCV(
         estimator=lgbm_model,
         param_grid=param_grid,
@@ -85,11 +112,13 @@ def train_model():
         refit=True
     )
 
-    # 6. Entraînement + Tracking MLflow
-    mlflow.set_experiment("credit_scoring_lgbm")
-
+    # 7. Entraînement + Tracking MLflow
     run_name = f"LGBM_GridSearch_CV_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}"
     with mlflow.start_run(run_name=run_name):
+        
+        # Log des scores baseline
+        mlflow.log_metric("dummy_business_score", dummy_score)
+        mlflow.log_metric("logreg_business_score", logreg_score)
 
         grid_search.fit(X_train, y_train)
 

@@ -115,5 +115,8 @@ Cliquer sur "Deploy".
 -  Lancement
 Ouvrir l'URL de l'API Render 5 minutes avant la démo (pour réveiller le serveur). qui affichera {"message": "API is running"}.
 Ouvrir le Dashboard Streamlit.
-Collez l'URL Render dans la sidebar.
+Collez l'URL Render dans la sidebar.  
 Faites votre démo !
+
+
+https://scoringmodel-mt9w7d7psalzchsqbwza69.streamlit.app

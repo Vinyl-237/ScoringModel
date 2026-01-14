@@ -7,6 +7,9 @@ from pydantic import BaseModel
 # Pour charger le modèle sauvegardé
 import joblib
 
+# Pour l'interprétabilité
+import shap
+
 # Pour manipuler les données sous forme de DataFrame
 import pandas as pd
 
@@ -35,6 +38,9 @@ THRESHOLD_PATH = os.path.join(config.DATA_DIR, "best_threshold.json")
 with open(THRESHOLD_PATH, "r") as f:
     THRESHOLD = json.load(f)["best_threshold"]
 
+# Initialisation de l'explainer SHAP (au démarrage pour ne pas ralentir les requêtes)
+explainer = shap.TreeExplainer(model)
+
 @app.post("/predict")
 def predict(client: ClientData):
     """
@@ -53,13 +59,28 @@ def predict(client: ClientData):
     # Décision finale selon le seuil optimal
     decision = make_decision(probability, THRESHOLD)
 
+    # Calcul des valeurs SHAP pour ce client spécifique
+    # shap_values renvoie une liste [array_classe_0, array_classe_1] pour la classification binaire
+    shap_vals = explainer.shap_values(df)
+    
+    # Gestion robuste selon la version de SHAP / LightGBM
+    if isinstance(shap_vals, list):
+        # On prend la classe 1 (Défaut)
+        shap_values_client = shap_vals[1][0].tolist()
+        base_value = explainer.expected_value[1]
+    else:
+        shap_values_client = shap_vals[0].tolist()
+        base_value = explainer.expected_value
+
     # Retour JSON
     return {
-    "prediction": int(prediction),
-    "probability_default": float(probability),
-    "threshold_used": THRESHOLD,
-    "prediction": decision,
-    "decision": "REFUSÉ" if decision == 1 else "ACCEPTÉ"
+        "prediction": int(decision),
+        "probability_default": float(probability),
+        "threshold_used": THRESHOLD,
+        "decision": "REFUSÉ" if decision == 1 else "ACCEPTÉ",
+        "shap_values": shap_values_client,
+        "base_value": float(base_value),
+        "feature_names": df.columns.tolist()
     }
 
 @app.get("/")

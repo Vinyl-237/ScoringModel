@@ -1,6 +1,8 @@
 import streamlit as st
 import requests
 import json
+import shap
+import matplotlib.pyplot as plt
 
 # Configuration de la page
 st.set_page_config(
@@ -117,6 +119,24 @@ if submit_button:
             
             st.progress(result['probability_default'], text="Niveau de risque")
             st.caption(f"Seuil de décision utilisé : {result['threshold_used']:.3f}")
+            
+            # --- Interprétabilité (SHAP) ---
+            st.markdown("---")
+            st.subheader("🔍 Explication de la décision (SHAP)")
+            
+            if "shap_values" in result:
+                # Reconstruction de l'objet Explanation pour SHAP
+                shap_exp = shap.Explanation(
+                    values=result["shap_values"],
+                    base_values=result["base_value"],
+                    data=list(client_data.values()),
+                    feature_names=result["feature_names"]
+                )
+                
+                # Affichage du Waterfall Plot
+                fig, ax = plt.subplots(figsize=(8, 6))
+                shap.plots.waterfall(shap_exp, max_display=10, show=False)
+                st.pyplot(fig)
             
         else:
             st.error(f"Erreur API : {response.status_code}")
