@@ -61,20 +61,34 @@ Le meilleur modèle sera celui qui :
 5. Tenir compte du déséquilibre des classes
 6. Est stable en cross-validation
 
+PARTIE 4 — API et dasboard
 
-Tester l’API localement
+1 - Tester l’API localement
 Dans un terminal : uvicorn src.api.app:app --reload
 
-Pour lancer le test unitaire : pytest tests/
+2 - Pour lancer le test unitaire : pytest tests/
 
-Comment visualiser data_drift_report.html (son rapport) :
+3 - Comment visualiser data_drift_report.html (son rapport) :
 
 - Depuis la racine du projet :
 open reports/data_drift_report.html
-Ça l’ouvrira directement dans ton navigateur par défaut (Safari / Chrome).
-- Option pro (serveur local)
+Ça l’ouvrira directement dans le navigateur.
+- Depuis le serveur local
 Utile pour partager ou éviter des soucis de chargement :
 cd reports
 python -m http.server 8000
+
+4 - Lancement du dashboard en local pour tester
+
+Étape 1 : 
+pip install -r requirements.txt
+
+Étape 2 : Lancer l'API (Terminal 1)
+Ouvrez un premier terminal (à la racine du projet) et lancez le serveur FastAPI :  uvicorn src.api.app:app --reload
+Vous devriez voir un message indiquant : Uvicorn running on http://127.0.0.1:8000.
+Gardez ce terminal ouvert.
+
+Étape 3 : Lancer le Dashboard (Terminal 2)
+Ouvrez un deuxième terminal et lancez Streamlit : streamlit run src/dashboard.py
 
 Ok donne moi un plan de présentation en te basant sur ce référentiel en incluant une introduction, une conclusion et perspectives(Ce que tu peux encore améliorer (OPTIONNEL)), biensur il faut expliquer ce qu'est une API, MLOps

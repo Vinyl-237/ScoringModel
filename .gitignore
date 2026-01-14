@@ -7,7 +7,8 @@ __pycache__/
 *.pyc
 
 # Data
-src/data/
+src/data/*
+!src/data/best_threshold.json
 *.csv
 *.parquet
 
@@ -16,6 +17,7 @@ src/data/
 *.joblib
 *.h5
 *.pt
+!src/models/final_model_LightGBM.pkl
 
 # Jupyter
 .ipynb_checkpoints/
