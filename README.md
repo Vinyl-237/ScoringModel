@@ -92,3 +92,28 @@ Gardez ce terminal ouvert.
 Ouvrez un deuxième terminal et lancez Streamlit : streamlit run src/dashboard.py
 
 Ok donne moi un plan de présentation en te basant sur ce référentiel en incluant une introduction, une conclusion et perspectives(Ce que tu peux encore améliorer (OPTIONNEL)), biensur il faut expliquer ce qu'est une API, MLOps
+
+5 - Hebergement :
+
+- Formulaire streamlit cloud
+Name : Scoring Moel.
+Region : Frankfurt (plus proche) ou Ohio.
+Branch : evolution (ou main si vous avez fusionné).
+Runtime : Python 3.
+Build Command : pip install -r requirements.txt
+Start Command : uvicorn src.api.app:app --host 0.0.0.0 --port $PORT
+
+- Mise en ligne de l'interface sur : share.streamlit.io.
+Connection de GitHub.
+cliquer sur "New app".
+Remplissage du formulaire :
+Repository : dépôt ScoringModel.
+Branch : nom-de-la-branche.
+Main file path : (src/dashboard.py) chemin vers le dashboard
+Cliquer sur "Deploy".
+
+-  Lancement
+Ouvrir l'URL de l'API Render 5 minutes avant la démo (pour réveiller le serveur). qui affichera {"message": "API is running"}.
+Ouvrir le Dashboard Streamlit.
+Collez l'URL Render dans la sidebar.
+Faites votre démo !
