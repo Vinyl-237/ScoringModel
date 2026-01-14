@@ -14,12 +14,16 @@ st.title("🏦 Prédiction de Solvabilité Client")
 st.markdown("Ce dashboard permet d'interroger l'API de scoring pour évaluer le risque de défaut d'un client.")
 
 # --- Configuration de l'API ---
-# En local, utilisez http://127.0.0.1:8000/predict
-# En production, remplacez par l'URL de votre API déployée (ex: https://mon-api.herokuapp.com/predict)
-API_URL = "http://127.0.0.1:8000/predict"
+# Détection automatique : Si on est sur Streamlit Cloud, on utilise l'URL de prod, sinon local
+# Vous devez remplacer l'URL ci-dessous par VOTRE URL Render une fois déployée
+PROD_API_URL = "https://VOTRE-NOM-APP.onrender.com/predict"
+LOCAL_API_URL = "http://127.0.0.1:8000/predict"
+
+# Si l'URL de prod est vide ou par défaut, on laisse le choix
+API_URL = PROD_API_URL if "streamlit.app" in str(st.query_params) else LOCAL_API_URL
 
 st.sidebar.header("Configuration")
-api_url_input = st.sidebar.text_input("URL de l'API", API_URL)
+api_url_input = st.sidebar.text_input("URL de l'API", value=API_URL)
 
 # --- Formulaire de saisie ---
 st.header("Informations du Client")
