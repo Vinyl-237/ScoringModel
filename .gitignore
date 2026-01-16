@@ -39,7 +39,7 @@ Thumbs.db
 .env
 
 # Fichiers volumineux
-Notebook/AnalyseExploratoire.ipynb
-Notebook/main.ipynb
-src/report/data_drift_report.html
+# Notebook/AnalyseExploratoire.ipynb
+# Notebook/main.ipynb
+# src/report/data_drift_report.html
 mlflow.db
