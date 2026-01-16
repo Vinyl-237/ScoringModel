@@ -96,7 +96,7 @@ Ok donne moi un plan de présentation en te basant sur ce référentiel en inclu
 5 - Hebergement :
 
 - Formulaire streamlit cloud
-Name : Scoring Moel.
+Name : Scoring Model.
 Region : Frankfurt (plus proche) ou Ohio.
 Branch : evolution (ou main si vous avez fusionné).
 Runtime : Python 3.
