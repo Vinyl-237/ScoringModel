@@ -76,51 +76,51 @@ if not use_file:
             index=1
         )
 
-    with col2:
-        st.subheader("Données Financières & Externes")
-        ext_source_1 = st.slider("Source Externe 1 (Normalisée)", 0.0, 1.0, 0.5)
-        ext_source_2 = st.slider("Source Externe 2 (Normalisée)", 0.0, 1.0, 0.5)
-        ext_source_3 = st.slider("Source Externe 3 (Normalisée)", 0.0, 1.0, 0.5)
-        
-        bureau_days_credit_update_mean = st.number_input(
-            "Moyenne jours update crédit Bureau", 
-            value=-30.0
-        )
-        reg_city_not_work_city = st.selectbox(
-            "Ville résid. != Ville travail",
-            options=[0.0, 1.0],
-            format_func=lambda x: "Oui" if x == 1.0 else "Non"
-        )
+        with col2:
+            st.subheader("Données Financières & Externes")
+            ext_source_1 = st.slider("Source Externe 1 (Normalisée)", 0.0, 1.0, 0.5)
+            ext_source_2 = st.slider("Source Externe 2 (Normalisée)", 0.0, 1.0, 0.5)
+            ext_source_3 = st.slider("Source Externe 3 (Normalisée)", 0.0, 1.0, 0.5)
+            
+            bureau_days_credit_update_mean = st.number_input(
+                "Moyenne jours update crédit Bureau", 
+                value=-30.0
+            )
+            reg_city_not_work_city = st.selectbox(
+                "Ville résid. != Ville travail",
+                options=[0.0, 1.0],
+                format_func=lambda x: "Oui" if x == 1.0 else "Non"
+            )
 
-    # Autres champs requis par le schéma
-    st.subheader("Autres indicateurs")
-    c3, c4 = st.columns(2)
-    with c3:
-        region_rating = st.slider("Note région client", 1, 3, 2)
-        days_last_phone = st.number_input("Dernier changement téléphone (jours)", value=-1000)
-    with c4:
-        days_id_publish = st.number_input("Publication ID (jours)", value=-3000)
+        # Autres champs requis par le schéma
+        st.subheader("Autres indicateurs")
+        c3, c4 = st.columns(2)
+        with c3:
+            region_rating = st.slider("Note région client", 1, 3, 2)
+            days_last_phone = st.number_input("Dernier changement téléphone (jours)", value=-1000)
+        with c4:
+            days_id_publish = st.number_input("Publication ID (jours)", value=-3000)
 
-    # Bouton de soumission
-        submit_button = st.form_submit_button(label="🔍 Analyser le dossier")
-        
-        if submit_button:
-            # Construction du payload JSON manuel
-            client_data = {
-                "DAYS_BIRTH": int(days_birth),
-                "DAYS_EMPLOYED": int(days_employed),
-                "bureau_DAYS_CREDIT_UPDATE_mean": bureau_days_credit_update_mean,
-                "REGION_RATING_CLIENT": int(region_rating),
-                "NAME_INCOME_TYPE_Working": int(name_income_type_working),
-                "DAYS_LAST_PHONE_CHANGE": int(days_last_phone),
-                "CODE_GENDER_M": int(code_gender_m),
-                "DAYS_ID_PUBLISH": int(days_id_publish),
-                "REG_CITY_NOT_WORK_CITY": float(reg_city_not_work_city),
-                "EXT_SOURCE_1": ext_source_1,
-                "EXT_SOURCE_2": ext_source_2,
-                "EXT_SOURCE_3": ext_source_3
-            }
-            analyze_trigger = True
+        # Bouton de soumission
+            submit_button = st.form_submit_button(label="🔍 Analyser le dossier")
+            
+            if submit_button:
+                # Construction du payload JSON manuel
+                client_data = {
+                    "DAYS_BIRTH": int(days_birth),
+                    "DAYS_EMPLOYED": int(days_employed),
+                    "bureau_DAYS_CREDIT_UPDATE_mean": bureau_days_credit_update_mean,
+                    "REGION_RATING_CLIENT": int(region_rating),
+                    "NAME_INCOME_TYPE_Working": int(name_income_type_working),
+                    "DAYS_LAST_PHONE_CHANGE": int(days_last_phone),
+                    "CODE_GENDER_M": int(code_gender_m),
+                    "DAYS_ID_PUBLISH": int(days_id_publish),
+                    "REG_CITY_NOT_WORK_CITY": float(reg_city_not_work_city),
+                    "EXT_SOURCE_1": ext_source_1,
+                    "EXT_SOURCE_2": ext_source_2,
+                    "EXT_SOURCE_3": ext_source_3
+                }
+                analyze_trigger = True
 
 # --- Logique de prédiction ---
 if analyze_trigger and client_data:
