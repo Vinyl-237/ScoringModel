@@ -70,9 +70,9 @@ Dans un terminal : uvicorn src.api.app:app --reload
 
 3 - Comment visualiser data_drift_report.html (son rapport) :
 
-- Depuis la racine du projet :
-open reports/data_drift_report.html
-Ça l’ouvrira directement dans le navigateur.
+Depuis la racine du projet :
+- Lancer le calcul du drift : python -m src.monitoring.data_drift
+- OuvriR directement le raportage dans le navigateur : open src/report/data_drift_report.html
 - Depuis le serveur local
 Utile pour partager ou éviter des soucis de chargement :
 cd reports

@@ -118,18 +118,18 @@ def optimize_decision_threshold(
     # Recherche du meilleur seuil
     best_idx = int(np.argmax(scores))
 
-    # Sauvegarde du meilleur seuil et score dans un fichier JSON m
-    # best_threshold = thresholds[best_idx]
-    # best_score = scores[best_idx]
-    # # Sauvegarde du meilleur seuil et score dans un fichier JSON
-    # json.dump({
-    #     "best_threshold": float(best_threshold),
-    #     "best_score": float(best_score)
-    # }, open(os.path.join(config.DATA_DIR, "best_threshold.json"), "w"))
-    # json.dump({
-    #     "best_threshold": float(best_threshold),
-    #     "best_score": float(best_score)
-    # }, open(os.path.join(config.DATA_DIR, "best_threshold.json"), "w"))
+    best_threshold = thresholds[best_idx]
+    best_score = scores[best_idx]
+    
+    # Sauvegarde du meilleur seuil et score dans un fichier JSON
+    try:
+        with open(os.path.join(config.DATA_DIR, "best_threshold.json"), "w") as f:
+            json.dump({
+                "best_threshold": float(best_threshold),
+                "best_score": float(best_score)
+            }, f)
+    except Exception as e:
+        print(f"Attention: Impossible de sauvegarder le seuil optimal: {e}")
 
     return {
         "best_threshold": float(thresholds[best_idx]),

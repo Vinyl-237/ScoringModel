@@ -53,6 +53,15 @@ def train_model():
     )
 
     # 2. Initialisation MLflow
+    # Création d'un dossier mlruns horodaté à la racine du projet
+    timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+    # Utilisation de config.BASE_DIR (qui pointe vers src) pour trouver la racine du projet
+    project_root = os.path.dirname(config.BASE_DIR)
+    tracking_uri = os.path.join(project_root, f"mlruns_{timestamp}")
+    
+    mlflow.set_tracking_uri(f"file://{tracking_uri}")
+    print(f"Dossier MLflow créé : {tracking_uri}")
+
     mlflow.set_experiment("credit_scoring_lgbm")
     
     # --- MODÈLES DE COMPARAISON (Baseline) ---

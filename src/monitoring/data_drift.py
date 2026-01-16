@@ -14,11 +14,16 @@ def run_data_drift():
     # X_train = pd.read_pickle(os.path.join(config.DATA_DIR, "X_train.pkl"))
     # X_test = pd.read_pickle(os.path.join(config.DATA_DIR, "X_test.pkl"))
 
-    X_train = pd.read_pickle(os.path.join(config.DATA_DIR, "application_train.csv"))
-    X_test = pd.read_pickle(os.path.join(config.DATA_DIR, "application_test.csv"))
+    X_train = pd.read_csv(os.path.join(config.DATA_DIR, "application_train.csv"))
+    X_test = pd.read_csv(os.path.join(config.DATA_DIR, "application_test.csv"))
 
     print(f"Train shape : {X_train.shape}")
     print(f"Test shape  : {X_test.shape}")
+
+    # Alignement des colonnes : on ne garde que les features communes (exclut TARGET qui n'est pas dans le test)
+    common_cols = list(set(X_train.columns) & set(X_test.columns))
+    X_train = X_train[common_cols]
+    X_test = X_test[common_cols]
 
     # Création du rapport Evidently
     report = Report(
