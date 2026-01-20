@@ -1,0 +1,45 @@
+# Environnements virtuels
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.pyc
+
+# Data
+src/data/*
+!src/data/best_threshold.json
+*.csv
+*.parquet
+
+# Models
+*.pkl
+*.joblib
+*.h5
+*.pt
+!src/models/final_model_LightGBM.pkl
+
+# Jupyter
+.ipynb_checkpoints/
+
+# MLflow
+mlruns/
+mlruns_*/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE/Éditeur
+.vscode/
+.idea/
+
+# Logs et temporaires
+*.log
+.env
+
+# Fichiers volumineux
+# Notebook/AnalyseExploratoire.ipynb
+# Notebook/main.ipynb
+# src/report/data_drift_report.html
+mlflow.db
