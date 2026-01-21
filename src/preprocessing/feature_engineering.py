@@ -14,9 +14,7 @@ class FeatureEngineer:
     - Aucun data leakage
     """
 
-    # -------------------------------------------
-    # 1. AGRÉGATIONS (inspiré Kaggle, version optimisée)
-    # -------------------------------------------
+    # 1. AGRÉGATIONS 
     def aggregate_numeric(self, df, group_var, df_name):
         """
         Fonction d'agrégation numérique :
@@ -33,9 +31,7 @@ class FeatureEngineer:
 
         return agg
 
-    # -------------------------------------------
     # 2. Transformations sur les tables secondaires
-    # -------------------------------------------
     def process_bureau(self, bureau, bureau_balance):
         """Agrégations bureau + bureau_balance (Kaggle, simplifié)"""
         with timer("FE bureau + bureau_balance"):
@@ -66,9 +62,7 @@ class FeatureEngineer:
         with timer("FE credit"):
             return self.aggregate_numeric(credit, "SK_ID_CURR", "cc")
 
-    # -------------------------------------------
     # 3. MASTER METHOD
-    # -------------------------------------------
     def merge_all(self, data_dict):
         """Fusionne toutes les tables secondaires dans train/test"""
         train = data_dict["train"]

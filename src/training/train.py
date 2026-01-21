@@ -1,12 +1,3 @@
-"""
-Pipeline d'entraînement du modèle LightGBM
-- Cross-validation stratifiée
-- Optimisation des hyperparamètres (GridSearchCV)
-- Score métier
-- Tracking des expériences avec MLflow
-- Enregistrement du modèle dans le Model Registry
-"""
-
 import os
 import joblib
 import json
@@ -14,6 +5,7 @@ import mlflow
 import mlflow.lightgbm
 import pandas as pd
 import datetime 
+import numpy as np
 
 from lightgbm import LGBMClassifier
 from sklearn.model_selection import GridSearchCV, StratifiedKFold
@@ -25,7 +17,6 @@ from sklearn.pipeline import make_pipeline
 from src.training.scoring import optimize_decision_threshold
 from src.config.config import config
 from src.training.scoring import business_scorer
-#from src.utils.timer import timer
 
 def train_model():
     """
@@ -51,14 +42,12 @@ def train_model():
     y_test = pd.read_pickle(
         os.path.join(config.DATA_DIR, "y_test.pkl")
     )
-
-    # 2. Initialisation MLflow
-    # Création d'un dossier mlruns horodaté à la racine du projet
-    timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
-    # Utilisation de config.BASE_DIR (qui pointe vers src) pour trouver la racine du projet
-    project_root = os.path.dirname(config.BASE_DIR)
-    tracking_uri = os.path.join(project_root, f"mlruns_{timestamp}")
     
+    print(f"Dimensions après filtrage : X_train={X_train.shape}, X_test={X_test.shape}")
+
+    # 2. Initialisation MLflow (Le dossier 'mlruns' sera créé à la racine du projet s'il n'existe pas)
+    project_root = os.path.dirname(config.BASE_DIR)
+    tracking_uri = os.path.join(project_root, "mlruns")
     mlflow.set_tracking_uri(f"file://{tracking_uri}")
     print(f"Dossier MLflow créé : {tracking_uri}")
 
@@ -67,14 +56,14 @@ def train_model():
     # --- MODÈLES DE COMPARAISON (Baseline) ---
     print("Évaluation des modèles de référence...")
     
-    # A. Dummy Classifier (Naïf)
+    # A. Dummy Classifier
     dummy = DummyClassifier(strategy="stratified", random_state=42)
     dummy.fit(X_train, y_train)
     dummy_score = business_scorer(dummy, X_test, y_test)
     print(f"Dummy Business Score: {dummy_score:.4f}")
     
     # B. Régression Logistique (Linéaire)
-    # Nécessite une mise à l'échelle (StandardScaler)
+    # Mise à l'échelle (StandardScaler)
     logreg = make_pipeline(
         StandardScaler(),
         LogisticRegression(class_weight="balanced", random_state=42, max_iter=1000)

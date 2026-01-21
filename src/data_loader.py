@@ -11,6 +11,8 @@ def load_csv(filename: str) -> pd.DataFrame:
     Charge un fichier CSV dans le dossier /data.
     """
     path = os.path.join(config.DATA_DIR, filename)
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"Erreur: Le fichier {path} est introuvable.")
     return pd.read_csv(path)
 
 
@@ -40,5 +42,3 @@ def load_all_data():
         "installments": installments,
         "credit": credit_card
     }
-
-

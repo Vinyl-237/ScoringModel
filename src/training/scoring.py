@@ -1,7 +1,3 @@
-"""
-Fonctions de scoring métier et optimisation du seuil de décision.
-"""
-
 import numpy as np
 import os
 import json
@@ -89,13 +85,6 @@ def optimize_decision_threshold(
             "thresholds": list
         }
     """
-
-    # if y_true is None or y_proba is None:
-    #     try:
-    #         with open(os.path.join(config.DATA_DIR, "best_threshold.json")) as f:
-    #             return json.load(f)
-    #     except FileNotFoundError:
-    #         raise ValueError("Aucun seuil sauvegardé trouvé et aucune donnée fournie pour l'optimisation.")
     
     # Seuils par défaut
     if thresholds is None:
