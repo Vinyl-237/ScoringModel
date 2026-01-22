@@ -22,7 +22,7 @@ PROD_API_URL = "https://scoring-model-0gz7.onrender.com/predict"
 LOCAL_API_URL = "http://127.0.0.1:8000/predict"
 
 # Par défaut on utilise la PROD, sauf si on veut tester en local
-API_URL = LOCAL_API_URL 
+API_URL = PROD_API_URL 
 
 st.sidebar.header("Configuration")
 api_url_input = st.sidebar.text_input("URL de l'API", value=API_URL)
