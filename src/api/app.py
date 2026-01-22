@@ -88,5 +88,6 @@ def root():
     Endpoint racine pour vérifier que l'API fonctionne
     """
     return {
-        "message": "API is running"
+        "message": "API is running",
+        "version": app.version
     }
