@@ -49,7 +49,7 @@ class Preprocessor:
 
     # 4. Encodage One-Hot
     def one_hot_encode(self, df: pd.DataFrame) -> pd.DataFrame:
-        """Encodage OneHotEncoder style Kaggle mais sans fuite (fit séparé train/test)"""
+        """Encodage OneHotEncoder"""
         return pd.get_dummies(df, drop_first=True)
 
     # 5. MASTER METHOD
