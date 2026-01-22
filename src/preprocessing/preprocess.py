@@ -5,7 +5,7 @@ from src.utils.timer import timer
 
 class Preprocessor:
     """
-    Nettoyage et préprocessing des données Home Credit.
+    Nettoyage et préprocessing des données.
     Mélange entre :
     - bonnes pratiques Kaggle
     - exigences de ton référentiel (OHE, imputations, normalisation, pas de fuite)
