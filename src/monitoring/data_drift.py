@@ -11,9 +11,6 @@ def run_data_drift():
     print("Lancement de l'analyse de data drift...")
 
     # Chargement des données
-    # X_train = pd.read_pickle(os.path.join(config.DATA_DIR, "X_train.pkl"))
-    # X_test = pd.read_pickle(os.path.join(config.DATA_DIR, "X_test.pkl"))
-
     X_train = pd.read_csv(os.path.join(config.DATA_DIR, "application_train.csv"))
     X_test = pd.read_csv(os.path.join(config.DATA_DIR, "application_test.csv"))
 

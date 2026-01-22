@@ -59,8 +59,7 @@ def predict(client: ClientData):
     # Décision finale selon le seuil optimal
     decision = make_decision(probability, THRESHOLD)
 
-    # Calcul des valeurs SHAP pour ce client spécifique
-    # shap_values renvoie une liste [array_classe_0, array_classe_1] pour la classification binaire
+    # Calcul des valeurs SHAP pour l'interprétabilité
     shap_vals = explainer.shap_values(df)
     
     # Gestion robuste selon la version de SHAP / LightGBM

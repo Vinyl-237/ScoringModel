@@ -72,7 +72,7 @@ Dans un terminal : uvicorn src.api.app:app --reload
 
 Depuis la racine du projet :
 - Lancer le calcul du drift : python -m src.monitoring.data_drift
-- OuvriR directement le raportage dans le navigateur : open src/report/data_drift_report.html
+- Ouvrir directement le rapport dans le navigateur : open src/report/data_drift_report.html
 - Depuis le serveur local
 Utile pour partager ou éviter des soucis de chargement :
 cd reports
@@ -80,7 +80,7 @@ python -m http.server 8000
 
 4 - Lancement du dashboard en local pour tester
 
-Étape 1 : 
+Étape 1 : installer les dépendances si ce n'est pas déjà fait
 pip install -r requirements.txt
 
 Étape 2 : Lancer l'API (Terminal 1)

@@ -28,11 +28,10 @@ def test_predict_valid_client():
         "DAYS_EMPLOYED": -2000,
         "bureau_DAYS_CREDIT_UPDATE_mean": -30.0,
         "REGION_RATING_CLIENT": 2,
+        "ins_DAYS_ENTRY_PAYMENT_min": -500.0,
         "NAME_INCOME_TYPE_Working": 1,
         "DAYS_LAST_PHONE_CHANGE": -1000,
-        "CODE_GENDER_M": 1,
         "DAYS_ID_PUBLISH": -3000,
-        "REG_CITY_NOT_WORK_CITY": 1.0,
         "EXT_SOURCE_1": 0.45,
         "EXT_SOURCE_2": 0.62,
         "EXT_SOURCE_3": 0.58
