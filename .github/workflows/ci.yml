@@ -3,9 +3,9 @@ name: CI Pipeline
 # Déclenchement : à chaque push ou pull request sur les branches principales
 on:
   push:
-    branches: [ "main", "evolution" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "main", "evolution" ]
+    branches: [ "main"]
 
 jobs:
   test:
