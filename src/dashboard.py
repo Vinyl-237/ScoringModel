@@ -64,10 +64,6 @@ with left_col:
             "nombre de jours moyen depuis la dernière mise à jour du crédit", 
             value=-30.0
         )
-        ins_days_entry_payment_min = st.number_input(
-            "jours minimum depuis le dernier paiement échelonné", # 
-            value=-500.0
-        )
         days_last_phone = st.number_input("Dernier changement de téléphone (jours)", value=-1000)
 
         # Bouton de soumission
@@ -79,11 +75,10 @@ with left_col:
                 "DAYS_BIRTH": int(days_birth),
                 "DAYS_EMPLOYED": int(days_employed),
                 "bureau_DAYS_CREDIT_UPDATE_mean": bureau_days_credit_update_mean,
-                "REGION_RATING_CLIENT": int(region_rating),
+                "REGION_RATING_CLIENT_W_CITY": int(region_rating),
                 "NAME_INCOME_TYPE_Working": int(name_income_type_working),
                 "DAYS_LAST_PHONE_CHANGE": int(days_last_phone),
                 "DAYS_ID_PUBLISH": int(days_id_publish),
-                "ins_DAYS_ENTRY_PAYMENT_min": float(ins_days_entry_payment_min),
                 "EXT_SOURCE_1": ext_source_1,
                 "EXT_SOURCE_2": ext_source_2,
                 "EXT_SOURCE_3": ext_source_3
