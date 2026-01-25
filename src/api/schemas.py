@@ -4,8 +4,7 @@ class ClientData(BaseModel):
     DAYS_BIRTH: int
     DAYS_EMPLOYED: int
     bureau_DAYS_CREDIT_UPDATE_mean: float
-    REGION_RATING_CLIENT: int
-    ins_DAYS_ENTRY_PAYMENT_min: float
+    REGION_RATING_CLIENT_W_CITY: int
     NAME_INCOME_TYPE_Working: int
     DAYS_LAST_PHONE_CHANGE: int
     DAYS_ID_PUBLISH: int

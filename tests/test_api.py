@@ -27,8 +27,7 @@ def test_predict_valid_client():
         "DAYS_BIRTH": -12000,
         "DAYS_EMPLOYED": -2000,
         "bureau_DAYS_CREDIT_UPDATE_mean": -30.0,
-        "REGION_RATING_CLIENT": 2,
-        "ins_DAYS_ENTRY_PAYMENT_min": -500.0,
+        "REGION_RATING_CLIENT_W_CITY": 2,
         "NAME_INCOME_TYPE_Working": 1,
         "DAYS_LAST_PHONE_CHANGE": -1000,
         "DAYS_ID_PUBLISH": -3000,
@@ -36,6 +35,7 @@ def test_predict_valid_client():
         "EXT_SOURCE_2": 0.62,
         "EXT_SOURCE_3": 0.58
     }
+    
 
     # Appel POST vers /predict
     response = client.post("/predict", json=payload)

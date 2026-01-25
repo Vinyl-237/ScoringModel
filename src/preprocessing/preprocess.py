@@ -14,6 +14,8 @@ class Preprocessor:
     def __init__(self):
         self.numeric_features = None
         self.categorical_features = None
+        self.imputation_values = {}
+        self.final_columns = []
 
     # 1. Nettoyage général
     def basic_cleaning(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -28,37 +30,47 @@ class Preprocessor:
 
         return df
 
-    # 2. Séparation num / cat
-    def detect_feature_types(self, df: pd.DataFrame):
-        """Sauvegarde les noms des colonnes catégorielles / numériques"""
-        self.numeric_features = df.select_dtypes(include=[np.number]).columns.tolist()
-        self.categorical_features = df.select_dtypes(exclude=[np.number]).columns.tolist()
+    def fit(self, df: pd.DataFrame):
+        """
+        Apprend les transformations à partir du jeu de données d'entraînement.
+        - Calcule les moyennes pour l'imputation.
+        - Détermine la liste finale des colonnes après one-hot encoding.
+        """
+        with timer("Fitting Preprocessor"):
+            df_clean = self.basic_cleaning(df)
+            self.numeric_features = df_clean.select_dtypes(include=[np.number]).columns.tolist()
+            self.categorical_features = df_clean.select_dtypes(exclude=[np.number]).columns.tolist()
 
-    # 3. Imputation
-    def impute(self, df: pd.DataFrame) -> pd.DataFrame:
-        """Imputation (moyenne + 'Unknown')"""
-        df = df.copy()
+            # Apprendre les valeurs d'imputation
+            for col in self.numeric_features:
+                self.imputation_values[col] = df_clean[col].mean()
+            for col in self.categorical_features:
+                self.imputation_values[col] = "Unknown"
 
-        # numériques -> moyenne
-        df[self.numeric_features] = df[self.numeric_features].fillna(df[self.numeric_features].mean())
+            # Apprendre les colonnes du one-hot encoding en simulant une transformation
+            df_imputed = self._impute(df_clean)
+            df_ohe = pd.get_dummies(df_imputed, drop_first=True)
+            self.final_columns = df_ohe.columns.tolist()
 
-        # catégorielles -> Unknown
-        df[self.categorical_features] = df[self.categorical_features].fillna("Unknown")
-
-        return df
-
-    # 4. Encodage One-Hot
-    def one_hot_encode(self, df: pd.DataFrame) -> pd.DataFrame:
-        """Encodage OneHotEncoder"""
-        return pd.get_dummies(df, drop_first=True)
-
-    # 5. MASTER METHOD
     def transform(self, df: pd.DataFrame) -> pd.DataFrame:
-        """Pipeline complète preprocessing"""
-        with timer("Preprocessing complet"):
-            df = self.basic_cleaning(df)
-            self.detect_feature_types(df)
-            df = self.impute(df)
-            df = self.one_hot_encode(df)
-        return df
+        """Applique les transformations apprises au jeu de données."""
+        with timer("Transforming data"):
+            df_clean = self.basic_cleaning(df)
+            df_imputed = self._impute(df_clean)
+            df_ohe = pd.get_dummies(df_imputed, drop_first=True)
 
+            # Aligner les colonnes avec celles du jeu d'entraînement
+            missing_cols = set(self.final_columns) - set(df_ohe.columns)
+            for c in missing_cols:
+                df_ohe[c] = 0
+
+            # S'assurer que l'ordre et le nombre de colonnes sont identiques
+            return df_ohe[self.final_columns]
+
+    def _impute(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Imputation interne utilisant les valeurs stockées."""
+        df = df.copy()
+        for col in df.columns:
+            if col in self.imputation_values:
+                df[col] = df[col].fillna(self.imputation_values[col])
+        return df
