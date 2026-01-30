@@ -10,7 +10,8 @@ import numpy as np
 st.set_page_config(
     page_title="Scoring Crédit - Dashboard",
     page_icon=":bank:",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
 # Titre et description
@@ -41,30 +42,37 @@ with left_col:
         days_birth = st.number_input(
             "Âge (en jours négatifs, ex: -12000)", 
             value=-12000, 
-            help="Exemple : -12000 correspond à environ 33 ans"
+            help="Entrez l'âge en jours. Une valeur négative est attendue (ex: -12000 jours ≈ 33 ans)."
         )
         days_employed = st.number_input(
             "Ancienneté emploi (jours négatifs)", 
-            value=-2000
+            value=-2000,
+            help="Nombre de jours depuis le début de l'emploi actuel (valeur négative)."
         )
         name_income_type_working = st.selectbox(
             "Type de revenu (salarié(1) ou autre(0))", 
             options=[0, 1],
-            index=1
+            index=1,
+            help="Sélectionnez 1 si le client travaille, 0 sinon."
         )
-        days_id_publish = st.number_input("Publication ID (jours)", value=-3000)
-        region_rating = st.slider("Note région client", 1, 3, 2)
+        days_id_publish = st.number_input(
+            "Publication ID (jours)", 
+            value=-3000,
+            help="Nombre de jours depuis la publication de la pièce d'identité."
+        )
+        region_rating = st.slider("Note région client", 1, 3, 2, help="Note de 1 à 3 évaluant la région du client.")
 
         st.subheader("Données Financières & Externes")
-        ext_source_1 = st.slider("Source Externe 1", 0.0, 1.0, 0.5)
-        ext_source_2 = st.slider("Source Externe 2", 0.0, 1.0, 0.5)
-        ext_source_3 = st.slider("Source Externe 3", 0.0, 1.0, 0.5)
+        ext_source_1 = st.slider("Source Externe 1", 0.0, 1.0, 0.5, help="Score normalisé provenant d'une source de données externe 1.")
+        ext_source_2 = st.slider("Source Externe 2", 0.0, 1.0, 0.5, help="Score normalisé provenant d'une source de données externe 2.")
+        ext_source_3 = st.slider("Source Externe 3", 0.0, 1.0, 0.5, help="Score normalisé provenant d'une source de données externe 3.")
         
         bureau_days_credit_update_mean = st.number_input(
-            "nombre de jours moyen depuis la dernière mise à jour du crédit", 
-            value=-30.0
+            "Jours moyens dernière maj crédit", 
+            value=-30.0,
+            help="Moyenne des jours depuis la dernière mise à jour des crédits au bureau (valeur négative)."
         )
-        days_last_phone = st.number_input("Dernier changement de téléphone (jours)", value=-1000)
+        days_last_phone = st.number_input("Dernier changement de téléphone (jours)", value=-1000, help="Jours depuis le dernier changement de téléphone.")
 
         # Bouton de soumission
         submit_button = st.form_submit_button(label=":mag: Analyser")
@@ -101,13 +109,22 @@ with right_col:
                 
                 # Affichage du résultat
                 col_res1, col_res2, col_res3 = st.columns(3)
-                col_res1.metric("Décision", result["decision"])
+                
+                # Gestion de la couleur et de l'icône pour l'accessibilité (ne pas se baser que sur la couleur)
+                decision_label = result["decision"]
+                if decision_label == "REFUSÉ":
+                    decision_icon = "⛔"
+                    decision_color = "inverse" # Streamlit gère le rouge par défaut pour les deltas négatifs, mais ici on affiche du texte
+                else:
+                    decision_icon = "✅"
+                
+                col_res1.metric("Décision Recommandée", f"{decision_icon} {decision_label}")
                 col_res2.metric("Probabilité de défaut", f"{result['probability_default']:.2%}")
-                col_res3.metric("Probabilité de non défaut", f"{1 - result['probability_default']:.2%}")
+                col_res3.metric("Seuil de décision", f"{result['threshold_used']:.3f}")
                 
                 st.progress(result['probability_default'], text=f"Niveau de risque : {result['probability_default']:.2%} / 100%")
-                st.caption(f"Seuil de décision utilisé : {result['threshold_used']:.3f}")
-                
+                st.caption("Note : Si le niveau de risque dépasse le seuil, le crédit est refusé.")
+
                 # --- Interprétabilité (SHAP) ---
                 st.markdown("---")
                 st.subheader("Détails de la décision (SHAP)")
@@ -123,17 +140,20 @@ with right_col:
                     
                     # Affichage du Waterfall Plot
                     fig, ax = plt.subplots(figsize=(8, 6))
-                    shap.plots.waterfall(shap_exp, max_display=10, show=False)
+                    # show=False permet de récupérer la figure pour Streamlit
+                    shap.plots.waterfall(shap_exp, max_display=10, show=False) 
                     st.pyplot(fig)
                     
                     # Calcul de f(x) pour l'explication
                     f_x = shap_exp.base_values + np.sum(shap_exp.values)
                     
-                    st.markdown("### Explication du résultat")
+                    # WCAG 1.1.1 : Alternative textuelle au graphique
+                    st.markdown("### 📝 Explication textuelle du graphique")
                     st.markdown(f"""
-                    Le graphique ci-dessus montre comment chaque variable contribue à pousser le score du client
-                                (Les barres rouges poussent vers le défaut, les bleues vers l'acceptation)
-                    - Valeur de base : {shap_exp.base_values:.3f}
+                    Le graphique ci-dessus (Waterfall Plot) décompose le score de risque :
+                    *   **Valeur de base (moyenne)** : {shap_exp.base_values:.3f}
+                    *   Les barres **rouges** indiquent les facteurs qui **augmentent** le risque.
+                    *   Les barres **bleues** indiquent les facteurs qui **diminuent** le risque.
                     - Valeur du client : {f_x:.3f}
                     """)
                     
