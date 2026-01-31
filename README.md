@@ -7,6 +7,7 @@ Il inclut :
 - Une API REST (FastAPI) pour servir les prédictions.
 - Un Dashboard interactif (Streamlit) pour les chargés de relation client.
 - Une chaîne CI/CD pour l'intégration continue.
+- **Nouveau :** Un module de veille technique (NLP) comparant SetFit (2022) à une approche classique.
 
 ## Structure du projet
 
@@ -17,6 +18,7 @@ Le projet est organisé comme suit :
     *   `dashboard.py` : Interface utilisateur (Streamlit).
     *   `preprocessing/` : Scripts de nettoyage et feature engineering.
     *   `training/` : Scripts d'entraînement et de scoring.
+    *   `veille/` : POC de veille technique (NLP).
     *   `monitoring/` : Détection du Data Drift.
 *   `tests/` : Tests unitaires (pytest).
 *   `.github/workflows/` : Configuration de l'intégration continue (CI).

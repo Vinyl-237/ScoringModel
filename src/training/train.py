@@ -1,11 +1,15 @@
 import os
+import sys
 import joblib
 import json
 import mlflow
 import mlflow.lightgbm
 import pandas as pd
-import datetime 
+import datetime
 import numpy as np
+
+# Ajout du chemin racine pour la robustesse des imports
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 from lightgbm import LGBMClassifier
 from sklearn.model_selection import GridSearchCV, StratifiedKFold
@@ -46,10 +50,9 @@ def train_model():
     print(f"Dimensions après filtrage : X_train={X_train.shape}, X_test={X_test.shape}")
 
     # 2. Initialisation MLflow (Le dossier 'mlruns' sera créé à la racine du projet s'il n'existe pas)
-    project_root = os.path.dirname(config.BASE_DIR)
-    tracking_uri = os.path.join(project_root, "mlruns")
+    tracking_uri = os.path.join(config.BASE_DIR, 'mlruns')
     mlflow.set_tracking_uri(f"file://{tracking_uri}")
-    print(f"Dossier MLflow créé : {tracking_uri}")
+    print(f"Dossier MLflow utilisé : {tracking_uri}")
 
     mlflow.set_experiment("credit_scoring_lgbm")
     
