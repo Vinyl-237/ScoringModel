@@ -4,15 +4,17 @@ import os
 class Config:
 
     # Chemin de base du projet
-    BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+    # Chemin vers le src
+    SRC_DIR = os.path.join(BASE_DIR, "src")
     # Dossier pour le monitoring
-    MONITORING_DIR = os.path.join(BASE_DIR, "monitoring")
+    MONITORING_DIR = os.path.join(SRC_DIR, "monitoring")
     # Dossier pour le reporting
-    REPORTING_DIR = os.path.join(BASE_DIR, "report")
+    REPORTING_DIR = os.path.join(SRC_DIR, "report")
     # Dossier contenant les CSV bruts du Home Credit Dataset
-    DATA_DIR = os.path.join(BASE_DIR, "data")
+    DATA_DIR = os.path.join(SRC_DIR, "data")
     # Dossier où seront enregistrés les modèles
-    MODELS_DIR = os.path.join(BASE_DIR, "models")
+    MODELS_DIR = os.path.join(SRC_DIR, "models")
 
     TARGET = "TARGET"
 
@@ -26,6 +28,7 @@ config = Config()
 
 if __name__ == "__main__":
     print("BASE_DIR =", config.BASE_DIR)
+    print("SRC_DIR =", config.SRC_DIR)
     print("MONITORING_DIR =", config.MONITORING_DIR)
     print("REPORTING_DIR =", config.REPORTING_DIR)
     print("DATA_DIR =", config.DATA_DIR)
