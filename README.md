@@ -95,9 +95,9 @@ Cette approche consiste à utiliser deux modèles "experts" séparés pour extra
 
     $$ α × β² × γ² ≈ 2 : Les facteurs d’augmentation de la profondeur (α), de la largeur (β) et de la résolution (γ) sont choisis de façon à ce que le coût de calcul double quand on augmente le niveau du modèle. $$
 
-    $$ \text{profondeur} = α^φ
-    $$ \text{largeur} = β^φ, 
-    $$ \text{résolution} = γ^φ $$
+    - profondeur = α^φ
+    - largeur = β^φ, 
+    - résolution = γ^φ $$
     
     > **Explication :** α, β et γ sont des constantes qui déterminent comment redimensionner respectivement la profondeur (nombre de couches), la largeur (nombre de canaux) et la résolution. φ est le coefficient global choisi par l'utilisateur. La contrainte $\approx 2$ garantit que les ressources de calcul (FLOPs) augmentent de manière prévisible (elles doublent à chaque incrément entier de $\phi$).
 *   **Références :**
@@ -111,7 +111,7 @@ Cette approche consiste à utiliser deux modèles "experts" séparés pour extra
     1.  **Masked Language Model (MLM) :** Masquer 15% des mots et essayer de les deviner grâce au contexte.
     2.  **Next Sentence Prediction (NSP) :** Prédire si la phrase B suit logiquement la phrase A.
 *   **Formule (Attention) :**
-    $$ \text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V $$
+    Attention(Q, K, V) = softmax( (Q × Kᵀ) / √dₖ ) × V
     > **Explication :** $Q$ (Query), $K$ (Key) et $V$ (Value) sont des représentations vectorielles des mots. Le produit $QK^T$ mesure la similarité entre les mots (qui regarde qui ?). La division par $\sqrt{d_k}$ stabilise les gradients lors de l'entraînement. Le softmax transforme ces scores en probabilités, permettant au modèle de pondérer l'importance (l'attention) de chaque mot $V$ par rapport aux autres pour construire le sens de la phrase.
 *   **Références :**
     *   [Papier Arxiv (1810.04805)](https://arxiv.org/abs/1810.04805)
@@ -127,8 +127,7 @@ Cette approche consiste à utiliser deux modèles "experts" séparés pour extra
     *   Il est entraîné sur 400 millions de paires (image, texte) collectées sur internet.
     *   L'objectif est l'**apprentissage contrastif** : pour un lot de $N$ paires, le modèle doit maximiser la similarité cosinus des $N$ bonnes paires (diagonale) et minimiser celle des $N^2 - N$ mauvaises paires.
 *   **Formule (Loss Contrastive simplifiée) :**
-    Pour une image $I$ et un texte $T$, on cherche à maximiser :
-    $$ \text{sim}(I, T) = \frac{I \cdot T}{\|I\| \|T\|} $$
+    Pour une image $I$ et un texte $T$, on cherche à maximiser : sim(I, T) = ( I · T ) / ( ||I|| × ||T|| )
     > **Explication :** C'est la formule de la **similarité cosinus**. Elle mesure l'angle entre le vecteur image $I$ et le vecteur texte $T$. Si les vecteurs pointent dans la même direction (angle nul), la valeur est 1 (forte similarité sémantique). S'ils sont orthogonaux, c'est 0. La division par les normes $\|I\|$ et $\|T\|$ rend la mesure indépendante de la "longueur" ou magnitude des vecteurs, se concentrant uniquement sur leur orientation (le sens).
 *   **Références :**
     *   [Papier Arxiv (2103.00020)](https://arxiv.org/abs/2103.00020)
