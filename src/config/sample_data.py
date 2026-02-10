@@ -1,5 +1,5 @@
 import pandas as pd
-import os
+from pathlib import Path
 from src.config.config import config
 
 def generate_dashboard_sample():
@@ -7,10 +7,11 @@ def generate_dashboard_sample():
     Génère un fichier CSV allégé pour le dashboard à partir de application_train.csv.
     Ce fichier 'sample_dashboard.csv' sera utilisé pour les comparaisons de population.
     """
-    source_path = os.path.join(config.DATA_DIR, "application_train.csv")
-    target_path = os.path.join(config.DATA_DIR, "sample_dashboard.csv")
+    # Utiliser pathlib pour une gestion des chemins plus moderne et robuste
+    source_path = Path(config.DATA_DIR) / "application_train.csv"
+    target_path = Path(config.DATA_DIR) / "sample_dashboard.csv"
     
-    if os.path.exists(source_path):
+    if source_path.exists():
         print(f"Chargement des données source : {source_path}")
         df_full = pd.read_csv(source_path)
         
