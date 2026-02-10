@@ -1,2 +1,2 @@
-from .app import FastAPI
+from .app import app
 from .schemas import ClientData

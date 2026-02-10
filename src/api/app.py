@@ -34,14 +34,14 @@ app = FastAPI(
 # Chargement du modèle
 model_path = os.path.join(config.MODELS_DIR, "final_model_LightGBM.pkl")
 if not os.path.exists(model_path):
-    raise FileNotFoundError(f"❌ Modèle introuvable : {model_path}. Veuillez vérifier qu'il est bien dans le dossier 'models/' à la racine.")
+    raise FileNotFoundError(f"Modèle introuvable : {model_path}. Veuillez vérifier qu'il est bien dans le dossier 'models/' à la racine.")
 
 model = joblib.load(model_path)
 
 # Chargement du seuil optimal
 THRESHOLD_PATH = os.path.join(config.DATA_DIR, "best_threshold.json")
 if not os.path.exists(THRESHOLD_PATH):
-    raise FileNotFoundError(f"❌ Fichier seuil introuvable : {THRESHOLD_PATH}. Veuillez vérifier qu'il est bien dans le dossier 'data/' à la racine.")
+    raise FileNotFoundError(f"Fichier seuil introuvable : {THRESHOLD_PATH}. Veuillez vérifier qu'il est bien dans le dossier 'data/' à la racine.")
 
 with open(THRESHOLD_PATH, "r") as f:
     THRESHOLD = json.load(f)["best_threshold"]

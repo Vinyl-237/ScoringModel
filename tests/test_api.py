@@ -1,3 +1,9 @@
+import sys
+import os
+
+# Ajout du chemin racine pour permettre l'import de src
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 # On importe TestClient pour tester l'API sans lancer de serveur réel
 from fastapi.testclient import TestClient
 
