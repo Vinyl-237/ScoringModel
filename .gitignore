@@ -6,18 +6,18 @@ venv/
 __pycache__/
 *.pyc
 
-# Data
-src/data/*
-!src/data/best_threshold.json
-*.csv
-*.parquet
-
 # Models
-*.pkl
-*.joblib
-*.h5
-*.pt
+models/**/*.pkl
+models/**/*.joblib
 !src/models/final_model_LightGBM.pkl
+
+# Data - Ignorer le contenu des dossiers de données par défaut
+src/data/*
+données_veille_tech/images/*
+
+# Data - Mais faire des exceptions pour les fichiers nécessaires au projet
+!src/data/best_threshold.json
+!src/data/sample_dashboard.csv
 
 # Jupyter
 .ipynb_checkpoints/
@@ -40,4 +40,3 @@ Thumbs.db
 
 # Fichiers volumineux
 mlflow.db
-données_veille_tech/images/*
